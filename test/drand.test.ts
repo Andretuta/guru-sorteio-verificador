@@ -45,6 +45,22 @@ describe('buscarRodadaVerificada', () => {
       .rejects.toBeInstanceOf(AssinaturaInvalida)
   })
 
+  test('formato frouxo que a lib aceita (maiúsculas, sufixo lixo) → AssinaturaInvalida', async () => {
+    const r: string = rodadaReal.randomness
+    const s: string = rodadaReal.signature
+    const casos = [
+      { ...rodadaReal, randomness: r.toUpperCase() },
+      { ...rodadaReal, randomness: r + 'zz' },
+      { ...rodadaReal, randomness: r + 'aa' },
+      { ...rodadaReal, signature: s.toUpperCase() },
+      { ...rodadaReal, signature: s + 'zz' },
+    ]
+    for (const beacon of casos) {
+      await expect(buscarRodadaVerificada(3000000, { fetch: fetchDuble({ beacon }) }))
+        .rejects.toBeInstanceOf(AssinaturaInvalida)
+    }
+  })
+
   test('servidor devolvendo outra rodada → AssinaturaInvalida', async () => {
     await expect(buscarRodadaVerificada(3000001, { fetch: fetchDuble() }))
       .rejects.toBeInstanceOf(AssinaturaInvalida)

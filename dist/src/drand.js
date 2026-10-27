@@ -62,7 +62,18 @@ export async function buscarRodadaVerificada(rodada, opts = {}) {
     };
     try {
         const b = await fetchBeacon(client, rodada);
-        return { rodada: b.round, randomness: b.randomness, assinatura: b.signature };
+        // A lib confere com Buffer.from(hex), que ignora maiúsculas e para no 1º par não-hex: sobraria
+        // espaço para um espelho adulterado "moer" sufixos em S. Aqui o formato é estrito e S é
+        // o que NÓS derivamos da assinatura, não o que veio escrito.
+        if (!/^[0-9a-f]{96}$/.test(b.signature))
+            throw new Error('assinatura fora do formato (96 hex minúsculos)');
+        if (!/^[0-9a-f]{64}$/.test(b.randomness))
+            throw new Error('randomness fora do formato (64 hex minúsculos)');
+        const bytes = Uint8Array.from(b.signature.match(/../g), (h) => parseInt(h, 16));
+        const derivada = Array.from(new Uint8Array(await globalThis.crypto.subtle.digest('SHA-256', bytes)), (x) => x.toString(16).padStart(2, '0')).join('');
+        if (derivada !== b.randomness)
+            throw new Error('randomness não é o sha256 da assinatura');
+        return { rodada: b.round, randomness: derivada, assinatura: b.signature };
     }
     catch (e) {
         if (e instanceof RodadaIndisponivel)

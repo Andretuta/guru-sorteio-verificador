@@ -14,11 +14,14 @@ async function sha256Hex(texto: string): Promise<string> {
 
 /** Uma linha `numero;exibicao` por participante, ordenada por número, com `\n` no fim. */
 export function listaCanonica(entradas: Entrada[]): string {
+  const vistos = new Set<string>()
   for (const e of entradas) {
-    // Quebra de linha ou ';' no lugar errado mudaria o que o hash cobre.
-    if (/[\n\r;]/.test(e.numero) || /[\n\r]/.test(e.exibicao)) {
+    // Número da sorte são 5 dígitos; quebra de linha na exibição mudaria o que o hash cobre.
+    if (!/^\d{5}$/.test(e.numero) || /[\n\r]/.test(e.exibicao)) {
       throw new Error(`entrada inválida na lista: ${JSON.stringify(e.numero)}`)
     }
+    if (vistos.has(e.numero)) throw new Error(`número da sorte repetido: ${e.numero}`)
+    vistos.add(e.numero)
   }
   // Comparação por unidade de código, não por localidade: tem de ser idêntica em qualquer máquina.
   return [...entradas]
@@ -46,6 +49,10 @@ export function rodadaAlvo(travadoEm: Date, folgaS = 600): number {
 
 /** Ordem final: k = sha256("<S>:<H>:<numero>") crescente. 1º = ganhador, depois os suplentes. */
 export async function ordenar(randomnessHex: string, hHex: string, numeros: string[]): Promise<string[]> {
+  // S e H entram no texto hasheado; maiúsculas ou lixo dariam outra ordem sem aviso.
+  if (!/^[0-9a-f]{64}$/.test(randomnessHex) || !/^[0-9a-f]{64}$/.test(hHex)) {
+    throw new TypeError('S e H devem ser sha256 em hex minúsculo (64 caracteres)')
+  }
   const comChave = await Promise.all(
     numeros.map(async (numero) => ({ numero, k: await sha256Hex(`${randomnessHex}:${hHex}:${numero}`) })),
   )
