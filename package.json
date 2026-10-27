@@ -1,0 +1,20 @@
+{
+  "name": "guru-sorteio-verificador",
+  "version": "1.0.0",
+  "description": "Verificador aberto dos sorteios do Guru dos Cupons: lista travada + rodada futura do drand + ordem pública.",
+  "type": "module",
+  "license": "MIT",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "exports": { ".": { "types": "./dist/src/index.d.ts", "default": "./dist/src/index.js" } },
+  "bin": { "verificar": "./dist/bin/verificar.js" },
+  "files": ["dist", "README.md"],
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "prepare": "tsc -p tsconfig.build.json",
+    "test": "vitest run"
+  },
+  "dependencies": { "drand-client": "1.4.2" },
+  "devDependencies": { "typescript": "5.9.3", "vitest": "5.0.5", "@types/node": "22.10.2" }
+}
