@@ -107,7 +107,7 @@ const ordem = await ordenar(S, H, ['00007'])          // números, do 1º ao úl
   `buscarRodadaVerificada`.
 - Versões: a tag git `v1.0.0` é imutável por convenção. Instalação a partir
   do git: `pnpm add git+https://github.com/Andretuta/guru-sorteio-verificador.git#v1.0.0`
-  (o script `prepare` compila `dist/`).
+  (o `dist/` compilado já vai no repositório, então a instalação não depende de rodar scripts; rode `pnpm build` e commite o `dist/` antes de cada tag).
 
 ### Desenvolvimento
 
