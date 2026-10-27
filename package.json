@@ -12,7 +12,6 @@
   "engines": { "node": ">=22" },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "prepare": "tsc -p tsconfig.build.json",
     "test": "vitest run"
   },
   "dependencies": { "drand-client": "1.4.2" },
