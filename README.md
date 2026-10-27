@@ -39,7 +39,7 @@ Precisa do [Node.js](https://nodejs.org) 22 ou mais novo.
 git clone https://github.com/Andretuta/guru-sorteio-verificador.git
 cd guru-sorteio-verificador
 npm install -g pnpm   # se ainda não tiver
-pnpm install          # já compila o programa
+pnpm install
 node dist/bin/verificar.js lista.txt 3000000
 ```
 
